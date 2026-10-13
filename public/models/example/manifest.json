@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "tiny-product-classifier",
+  "version": "1.0.0",
+  "task": "text-classification",
+  "runtime": "onnx",
+  "files": {
+    "model": "model.onnx",
+    "labels": "labels.json"
+  },
+  "input": {
+    "type": "tensor"
+  },
+  "output": {
+    "type": "labels",
+    "processor": "softmax"
+  }
+}

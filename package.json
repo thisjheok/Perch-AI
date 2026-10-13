@@ -1,0 +1,46 @@
+{
+  "name": "@perch-ai/browser",
+  "version": "0.1.0",
+  "description": "Run lightweight ONNX models in the browser.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "vite",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "onnx",
+    "webgpu",
+    "wasm",
+    "machine-learning",
+    "browser"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.1",
+    "onnxruntime-web": "^1.30.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  }
+}
