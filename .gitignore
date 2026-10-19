@@ -9,3 +9,4 @@ dist/
 .vite/
 coverage/
 .DS_Store
+.gjc/
