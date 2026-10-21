@@ -10,6 +10,17 @@
       <p><a href="/">예제 홈</a></p>
       <h1>WASM / WebGPU 벤치마크</h1>
       <p>같은 입력으로 생성된 FP32·FP16·INT8 MobileNetV2 변형을 비교합니다. 사용 가능한 manifest만 실행하며, variant별 모델 크기·전처리·cold/warm 초기화·추론 시간과 FP32 대비 출력 차이를 기록합니다. cold 초기화 전 SDK Cache API 항목을 지우지만 브라우저 HTTP 캐시는 지우지 않습니다.</p>
+      <h2>전처리 단계 프로파일</h2>
+      <p>여러 입력 이미지에서 디코딩, 리사이즈, 픽셀 readback, tensor packing 시간을 따로 측정합니다. 이 단계에는 모델 추론이 포함되지 않습니다.</p>
+      <label>
+        프로파일 이미지들
+        <input id="profile-files" type="file" accept="image/*" multiple />
+      </label>
+      <button id="profile-preprocessing">전처리 프로파일 실행</button>
+      <p id="profile-status">이미지들을 선택하세요.</p>
+      <pre id="profile-results"></pre>
+      <hr />
+      <h2>모델 변형 비교</h2>
       <label>
         입력 이미지
         <input id="image-file" type="file" accept="image/*" />

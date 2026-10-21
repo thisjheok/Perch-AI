@@ -33,7 +33,7 @@ npm run dev
 
 Open the local URL printed by Vite. The example page demonstrates image classification with the bundled MobileNetV2 model and also includes a separate text-generation demo powered by Transformers.js. The text-generation path is an example-page feature, not part of the `createLocalAI()` API.
 
-Open `/benchmark.html` to compare available FP32, FP16, and INT8 MobileNetV2 variants on the same image tensor across WASM/WebGPU. It reports model size, preprocessing, cold/warm initialization, p50/p95 inference latency, and output differences from FP32. It runs 30 inferences per trial and three trials by default. INT8 requires representative calibration images.
+Open `/benchmark.html` to profile preprocessing across multiple images and compare available FP32, FP16, and INT8 MobileNetV2 variants across WASM/WebGPU. Preprocessing reports p50/p95 separately for decode, canvas resize, pixel readback, and tensor packing. Model comparisons report model size, cold/warm initialization, p50/p95 inference latency, and output differences from FP32; model tests run 30 inferences per trial and three trials by default. INT8 requires representative calibration images.
 
 Generate model variants with the Python tool. Static INT8 quantization requires at least 10 representative input images (labels are not required). Do not calibrate with a logo or other non-representative images; the resulting quality would not predict real inputs. The generator also reports top-1/top-5 agreement and probability differences against FP32 on the calibration images; because calibration and comparison use the same images, this is not independent validation.
 

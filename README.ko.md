@@ -33,7 +33,7 @@ npm run dev
 
 Vite가 출력하는 로컬 주소를 브라우저에서 여세요. 예제 페이지에서는 포함된 MobileNetV2 모델을 이용한 이미지 분류와 Transformers.js를 사용하는 별도의 텍스트 생성 데모를 제공합니다. 텍스트 생성 경로는 예제 페이지 기능이며 `createLocalAI()` API에는 포함되지 않습니다.
 
-브라우저에서 `/benchmark.html`을 열면 같은 이미지 tensor로 사용 가능한 FP32·FP16·INT8 MobileNetV2 변형을 WASM/WebGPU에서 비교합니다. 모델 크기, 전처리, cold/warm 초기화, warm-up 후 추론 p50/p95와 FP32 대비 top-1·top-K 점수 차이를 기록합니다. 기본값은 라운드당 30회씩 3라운드입니다. INT8 변형은 대표 보정 이미지가 있어야 생성됩니다.
+브라우저에서 `/benchmark.html`을 열면 여러 이미지에 대한 전처리 profiler와 FP32·FP16·INT8 MobileNetV2 변형 비교를 실행할 수 있습니다. profiler는 디코딩, canvas resize, 픽셀 readback, tensor packing 단계별 p50/p95를 기록하고, 모델 비교는 모델 크기, cold/warm 초기화, warm-up 후 추론 p50/p95와 FP32 대비 출력을 기록합니다. 기본 모델 측정은 라운드당 30회씩 3라운드입니다. INT8 변형은 대표 보정 이미지가 있어야 생성됩니다.
 
 모델 변형은 Python 도구로 생성합니다. INT8 정적 양자화에는 실제 사용 입력을 대표하는 이미지가 최소 10장 필요합니다(레이블은 필요하지 않습니다). 몇 장의 로고나 비대표 이미지로 만든 보정값은 실제 정확도를 대표하지 않으므로 사용하지 마세요. 생성 도구는 보정 이미지에서 FP32 대비 top-1/top-5 일치율과 확률 차이도 출력하지만, 같은 이미지로 보정하고 비교하므로 독립 검증 결과는 아닙니다.
 

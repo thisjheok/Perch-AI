@@ -1,7 +1,7 @@
 import * as ort from "onnxruntime-web";
 import "./benchmark.css";
 import { createLocalAI, type LocalAI } from "./index";
-import { imageToTensor } from "./example-image";
+import { imageToTensor, type ImagePreprocessingTimings } from "./example-image";
 
 const modelVariants = [
   { variant: "fp32", manifestUrl: "/models/mobilenetv2/manifest.json" },
@@ -12,11 +12,15 @@ const cacheName = "perch-ai-models-v1";
 const warmupRuns = 3;
 const scoreTolerance = 0.01;
 const inputFile = document.querySelector<HTMLInputElement>("#image-file")!;
+const profileFiles = document.querySelector<HTMLInputElement>("#profile-files")!;
 const iterationsInput = document.querySelector<HTMLInputElement>("#iterations")!;
 const trialsInput = document.querySelector<HTMLInputElement>("#trials")!;
 const runButton = document.querySelector<HTMLButtonElement>("#run-benchmark")!;
+const profileButton = document.querySelector<HTMLButtonElement>("#profile-preprocessing")!;
 const status = document.querySelector<HTMLParagraphElement>("#status")!;
 const results = document.querySelector<HTMLPreElement>("#results")!;
+const profileStatus = document.querySelector<HTMLParagraphElement>("#profile-status")!;
+const profileResults = document.querySelector<HTMLPreElement>("#profile-results")!;
 const downloadButton = document.querySelector<HTMLButtonElement>("#download-report")!;
 
 interface ClassificationResult {
@@ -41,6 +45,7 @@ interface RuntimeResult {
 interface BenchmarkReport {
   startedAt: string;
   preprocessingMs: number;
+  preprocessingStagesMs: ImagePreprocessingTimings;
   input: { name: string; bytes: number; dimensions: number[] };
   cache: {
     sdkCacheAvailable: boolean;
@@ -90,6 +95,37 @@ interface ModelVariantResult {
 let selectedFile: File | undefined;
 let latestReport: BenchmarkReport | undefined;
 
+profileButton.addEventListener("click", async () => {
+  const files = Array.from(profileFiles.files ?? []);
+  if (files.length === 0) {
+    profileStatus.textContent = "전처리 프로파일링할 이미지들을 선택하세요.";
+    return;
+  }
+
+  profileButton.disabled = true;
+  profileResults.textContent = "";
+  try {
+    const samples: ImagePreprocessingTimings[] = [];
+    for (let index = 0; index < files.length; index++) {
+      profileStatus.textContent = `이미지 전처리 측정 중 (${index + 1}/${files.length})...`;
+      await nextFrame();
+      await imageToTensor(files[index], (timings) => samples.push(timings));
+    }
+    const stages = Object.fromEntries(
+      (Object.keys(samples[0]) as Array<keyof ImagePreprocessingTimings>).map((stage) => [
+        stage,
+        summarize(samples.map((sample) => sample[stage])),
+      ]),
+    );
+    profileResults.textContent = JSON.stringify({ images: files.length, stages }, null, 2);
+    profileStatus.textContent = `완료 — ${files.length}개 이미지, 단계별 p50/p95 기록`;
+  } catch (error) {
+    profileStatus.textContent = errorMessage(error);
+  } finally {
+    profileButton.disabled = false;
+  }
+});
+
 inputFile.addEventListener("change", () => {
   selectedFile = inputFile.files?.[0];
   runButton.disabled = !selectedFile;
@@ -128,9 +164,12 @@ runButton.addEventListener("click", async () => {
   const startedAt = new Date().toISOString();
   try {
     status.textContent = "이미지 전처리 중...";
-    const preprocessingStarted = performance.now();
-    const tensor = await imageToTensor(selectedFile);
-    const preprocessingMs = round(performance.now() - preprocessingStarted);
+    let preprocessingStagesMs: ImagePreprocessingTimings | undefined;
+    const tensor = await imageToTensor(selectedFile, (timings) => {
+      preprocessingStagesMs = timings;
+    });
+    if (!preprocessingStagesMs) throw new Error("Image preprocessing timings were not recorded.");
+    const preprocessingMs = preprocessingStagesMs.totalMs;
     const environment = getEnvironment();
     const models: ModelVariantResult[] = [];
     const unavailableVariants: string[] = [];
@@ -174,6 +213,7 @@ runButton.addEventListener("click", async () => {
     const report: BenchmarkReport = {
       startedAt,
       preprocessingMs,
+      preprocessingStagesMs,
       input: {
         name: selectedFile.name,
         bytes: selectedFile.size,
