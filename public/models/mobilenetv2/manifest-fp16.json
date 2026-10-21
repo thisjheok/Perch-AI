@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "mobilenetv2-imagenet-fp16",
+  "version": "12.0.0-fp16",
+  "task": "image-classification",
+  "runtime": "onnx",
+  "files": {
+    "model": "model-fp16.onnx",
+    "labels": "labels.json"
+  },
+  "input": {
+    "type": "tensor"
+  },
+  "output": {
+    "type": "labels",
+    "processor": "softmax",
+    "topK": 5
+  }
+}

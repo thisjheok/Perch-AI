@@ -9,7 +9,7 @@
     <main>
       <p><a href="/">예제 홈</a></p>
       <h1>WASM / WebGPU 벤치마크</h1>
-      <p>같은 MobileNetV2 모델과 입력으로 전처리, cold/warm 초기화, 추론을 분리 측정합니다. cold 초기화 전 SDK Cache API에서 이 모델의 항목만 지웁니다. 브라우저 HTTP 캐시는 지우지 않습니다.</p>
+      <p>같은 입력으로 생성된 FP32·FP16·INT8 MobileNetV2 변형을 비교합니다. 사용 가능한 manifest만 실행하며, variant별 모델 크기·전처리·cold/warm 초기화·추론 시간과 FP32 대비 출력 차이를 기록합니다. cold 초기화 전 SDK Cache API 항목을 지우지만 브라우저 HTTP 캐시는 지우지 않습니다.</p>
       <label>
         입력 이미지
         <input id="image-file" type="file" accept="image/*" />

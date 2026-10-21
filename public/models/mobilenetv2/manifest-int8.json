@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "mobilenetv2-imagenet-int8",
+  "version": "12.0.0-int8",
+  "task": "image-classification",
+  "runtime": "onnx",
+  "files": {
+    "model": "model-int8.onnx",
+    "labels": "labels.json"
+  },
+  "input": {
+    "type": "tensor"
+  },
+  "output": {
+    "type": "labels",
+    "processor": "softmax",
+    "topK": 5
+  }
+}

@@ -33,7 +33,16 @@ npm run dev
 
 Open the local URL printed by Vite. The example page demonstrates image classification with the bundled MobileNetV2 model and also includes a separate text-generation demo powered by Transformers.js. The text-generation path is an example-page feature, not part of the `createLocalAI()` API.
 
-Open `/benchmark.html` to compare WASM and WebGPU with the same image tensor and bundled MobileNetV2 model. It reports preprocessing, cold-cache initialization (including model download), warm-cache initialization, and p50/p95 inference latency after warm-up separately. Before a cold initialization it clears only this model's SDK Cache API entries; the browser HTTP cache is not controlled. Runtime order alternates across trials, with 30 inferences per trial and three trials by default. The JSON report includes the environment and actual execution order. It checks top-1 agreement and top-K score differences, not ground-truth accuracy.
+Open `/benchmark.html` to compare available FP32, FP16, and INT8 MobileNetV2 variants on the same image tensor across WASM/WebGPU. It reports model size, preprocessing, cold/warm initialization, p50/p95 inference latency, and output differences from FP32. It runs 30 inferences per trial and three trials by default. INT8 requires representative calibration images.
+
+Generate model variants with the Python tool. Static INT8 quantization requires at least 10 representative input images (labels are not required). Do not calibrate with a logo or other non-representative images; the resulting quality would not predict real inputs. The generator also reports top-1/top-5 agreement and probability differences against FP32 on the calibration images; because calibration and comparison use the same images, this is not independent validation.
+
+```sh
+python -m pip install -r tools/requirements-quantization.txt
+python tools/quantize_mobilenet.py --calibration-dir path/to/representative-images
+```
+
+FP16 needs no calibration data. INT8 statically quantizes Conv/Gemm with the supplied images and validates the ONNX and CPU inference. Generated variants are written under `public/models/mobilenetv2/`; the benchmark discovers their manifests automatically. The generator leaves the FP32 source model unchanged.
 
 ## SDK usage
 

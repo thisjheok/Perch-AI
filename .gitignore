@@ -10,3 +10,6 @@ dist/
 coverage/
 .DS_Store
 .gjc/
+
+imgs/
+tools/__pycache__

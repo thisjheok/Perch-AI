@@ -33,7 +33,16 @@ npm run dev
 
 Vite가 출력하는 로컬 주소를 브라우저에서 여세요. 예제 페이지에서는 포함된 MobileNetV2 모델을 이용한 이미지 분류와 Transformers.js를 사용하는 별도의 텍스트 생성 데모를 제공합니다. 텍스트 생성 경로는 예제 페이지 기능이며 `createLocalAI()` API에는 포함되지 않습니다.
 
-브라우저에서 `/benchmark.html`을 열면 같은 이미지 tensor와 MobileNetV2 모델로 WASM/WebGPU를 비교할 수 있습니다. 전처리 시간, 모델 다운로드를 포함한 cold-cache 초기화, 캐시를 사용하는 warm 초기화, warm-up 후 추론 p50/p95를 따로 기록합니다. SDK Cache API에서 이 모델의 항목만 비운 뒤 cold 초기화를 측정하며, 브라우저의 HTTP 캐시는 제어하지 않습니다. 측정 라운드마다 런타임 순서를 교차하고 기본값으로 라운드당 30회씩 3라운드를 실행합니다. 결과 JSON에는 환경과 실제 실행 순서도 포함합니다. 분류 결과의 top-1 일치 여부와 top-K 점수 차이를 검사하지만, 정답 레이블 기반 정확도 평가는 아닙니다.
+브라우저에서 `/benchmark.html`을 열면 같은 이미지 tensor로 사용 가능한 FP32·FP16·INT8 MobileNetV2 변형을 WASM/WebGPU에서 비교합니다. 모델 크기, 전처리, cold/warm 초기화, warm-up 후 추론 p50/p95와 FP32 대비 top-1·top-K 점수 차이를 기록합니다. 기본값은 라운드당 30회씩 3라운드입니다. INT8 변형은 대표 보정 이미지가 있어야 생성됩니다.
+
+모델 변형은 Python 도구로 생성합니다. INT8 정적 양자화에는 실제 사용 입력을 대표하는 이미지가 최소 10장 필요합니다(레이블은 필요하지 않습니다). 몇 장의 로고나 비대표 이미지로 만든 보정값은 실제 정확도를 대표하지 않으므로 사용하지 마세요. 생성 도구는 보정 이미지에서 FP32 대비 top-1/top-5 일치율과 확률 차이도 출력하지만, 같은 이미지로 보정하고 비교하므로 독립 검증 결과는 아닙니다.
+
+```sh
+python -m pip install -r tools/requirements-quantization.txt
+python tools/quantize_mobilenet.py --calibration-dir path/to/representative-images
+```
+
+FP16 모델은 별도 보정 이미지 없이 생성됩니다. INT8 생성 시에는 보정 이미지로 Conv/Gemm를 정적 양자화하고, 생성된 ONNX의 유효성과 CPU 추론을 확인합니다. 결과 파일은 `public/models/mobilenetv2/`에 생성되며, 벤치마크가 해당 manifest를 자동으로 찾아 FP32와 비교합니다. 모델 생성기는 FP32 원본을 변경하지 않습니다.
 
 ## SDK 사용법
 

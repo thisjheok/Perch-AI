@@ -23,6 +23,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "dev": "vite",
+    "models:quantize": "python tools/quantize_mobilenet.py",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
