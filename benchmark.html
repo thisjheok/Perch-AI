@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perch Runtime Benchmark</title>
+  </head>
+  <body>
+    <main>
+      <p><a href="/">예제 홈</a></p>
+      <h1>WASM / WebGPU 벤치마크</h1>
+      <p>같은 MobileNetV2 모델과 이미지 입력을 사용합니다. 초기화 시간은 manifest·모델 로드와 세션 생성 전체를 포함하며 캐시 상태에 따라 달라집니다.</p>
+      <label>
+        입력 이미지
+        <input id="image-file" type="file" accept="image/*" />
+      </label>
+      <label>
+        추론 반복 횟수 (warm-up 이후)
+        <input id="iterations" type="number" min="5" max="100" value="30" />
+      </label>
+      <button id="run-benchmark" disabled>벤치마크 실행</button>
+      <p id="status">이미지를 선택하세요.</p>
+      <pre id="results"></pre>
+      <button id="download-report" hidden>JSON 결과 다운로드</button>
+    </main>
+    <script type="module" src="/src/benchmark.ts"></script>
+  </body>
+</html>

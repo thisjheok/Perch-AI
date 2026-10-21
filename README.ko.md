@@ -33,6 +33,8 @@ npm run dev
 
 Vite가 출력하는 로컬 주소를 브라우저에서 여세요. 예제 페이지에서는 포함된 MobileNetV2 모델을 이용한 이미지 분류와 Transformers.js를 사용하는 별도의 텍스트 생성 데모를 제공합니다. 텍스트 생성 경로는 예제 페이지 기능이며 `createLocalAI()` API에는 포함되지 않습니다.
 
+브라우저에서 `/benchmark.html`을 열면 같은 이미지 tensor와 MobileNetV2 모델로 WASM/WebGPU를 비교할 수 있습니다. 모델 초기화 시간과 warm-up 후 추론 p50/p95를 따로 기록하고, 분류 결과의 top-1 일치 여부와 top-K 점수 차이를 검사합니다. 초기화 시간은 다운로드 또는 브라우저 캐시 상태의 영향을 받으므로 결과 JSON의 실행 환경과 함께 해석하세요. 이 검사는 정답 레이블 기반 정확도 평가가 아니라 런타임 간 출력 일치 검사입니다.
+
 ## SDK 사용법
 
 ```ts
@@ -103,6 +105,7 @@ npm run test:watch # 테스트 watch 모드 실행
 - `src/runtime/` — ONNX Runtime Web 세션 선택
 - `src/pipeline/` — 입력 검사와 출력 처리
 - `src/example.ts` — 브라우저 인터랙티브 예제
+- `src/benchmark.ts` — 브라우저 WASM/WebGPU 벤치마크
 - `public/models/` — 예제 manifest, 모델 파일, labels
 - `docs/` — 설계 및 구현 참고 문서
 

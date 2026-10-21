@@ -1,0 +1,24 @@
+body {
+  font-family: sans-serif;
+  margin: 2rem;
+  max-width: 52rem;
+}
+
+label,
+button {
+  display: block;
+  margin-top: 1rem;
+}
+
+input {
+  box-sizing: border-box;
+  display: block;
+  margin-top: 0.35rem;
+  padding: 0.4rem;
+  width: 100%;
+}
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
