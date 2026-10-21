@@ -33,7 +33,7 @@ npm run dev
 
 Open the local URL printed by Vite. The example page demonstrates image classification with the bundled MobileNetV2 model and also includes a separate text-generation demo powered by Transformers.js. The text-generation path is an example-page feature, not part of the `createLocalAI()` API.
 
-Open `/benchmark.html` to compare WASM and WebGPU with the same image tensor and bundled MobileNetV2 model. It reports initialization time separately from p50/p95 inference latency after warm-up, and checks top-1 agreement and top-K score differences. Initialization time depends on network and browser-cache state; interpret it alongside the environment metadata in the JSON report. This is a runtime-output consistency check, not ground-truth accuracy evaluation.
+Open `/benchmark.html` to compare WASM and WebGPU with the same image tensor and bundled MobileNetV2 model. It reports preprocessing, cold-cache initialization (including model download), warm-cache initialization, and p50/p95 inference latency after warm-up separately. Before a cold initialization it clears only this model's SDK Cache API entries; the browser HTTP cache is not controlled. Runtime order alternates across trials, with 30 inferences per trial and three trials by default. The JSON report includes the environment and actual execution order. It checks top-1 agreement and top-K score differences, not ground-truth accuracy.
 
 ## SDK usage
 
